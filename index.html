@@ -24,6 +24,7 @@
       border-radius:5px;
       cursor:pointer;
     }
+    <div id="result" style="margin-top:30px;"></div>
   </style>
 </head>
 <body>
@@ -34,17 +35,23 @@
   <br><br>
   <button onclick="checkTracking()">Track</button>
 
-  <script>
-    function checkTracking(){
-      const code = document.getElementById("trackInput").value;
+<script>
+  function checkTracking(){
+    const code = document.getElementById("trackInput").value;
+    const resultBox = document.getElementById("result");
 
-      if(code === "FX-UK-2026-83921"){
-        alert("Tracking Found ✅\nStatus: Processing\nLocation: London, UK");
-      }else{
-        alert("Tracking code not found ❌");
-      }
+    if(code === "FX-UK-2026-83921"){
+      resultBox.innerHTML = `
+        <h3 style="color:lime;">Tracking Found ✅</h3>
+        <p>Status: Processing</p>
+        <p>Location: London, UK</p>
+      `;
+    } else {
+      resultBox.innerHTML = `
+        <h3 style="color:red;">Tracking code not found ❌</h3>
+      `;
     }
-  </script>
-
+  }
+</script>       
 </body>
 </html>
