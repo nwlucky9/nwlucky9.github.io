@@ -18,3 +18,17 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 console.log("Firebase connected successfully");
+
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Test Firebase Write
+async function testFirebase() {
+  await setDoc(doc(db, "test", "connection"), {
+    message: "Firebase is working!",
+    time: new Date().toString()
+  });
+
+  alert("Firebase write successful ✅");
+}
+
+window.testFirebase = testFirebase;
