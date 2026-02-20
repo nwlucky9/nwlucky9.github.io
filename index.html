@@ -41,39 +41,57 @@
   
   <div id="result" style="margin-top:30px;"></div>
 
+   <!-- Firebase SDK -->
+<script type="module">
 
-   <script>
-  const trackingDatabase = {};
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_API_KEY",
+    authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+    projectId: "PASTE_YOUR_PROJECT_ID",
+    storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+    messagingSenderId: "PASTE_YOUR_SENDER_ID",
+    appId: "PASTE_YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Generate tracking code
   function generateTrackingCode() {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const country = letters[Math.floor(Math.random() * letters.length)] +
                     letters[Math.floor(Math.random() * letters.length)];
-
     const year = new Date().getFullYear();
     const randomNum = Math.floor(10000 + Math.random() * 90000);
-
     return `FX-${country}-${year}-${randomNum}`;
   }
 
-  function createOrder() {
+  // Create order in Firebase
+  window.createOrder = async function() {
     const newCode = generateTrackingCode();
 
-    trackingDatabase[newCode] = {
+    await setDoc(doc(db, "tracking", newCode), {
       status: "Processing",
       location: "Warehouse"
-    };
+    });
 
     document.getElementById("newCode").innerHTML =
       "New Tracking Code: <b>" + newCode + "</b>";
   }
 
-  function checkTracking(){
+  // Check tracking from Firebase
+  window.checkTracking = async function() {
     const code = document.getElementById("trackInput").value.trim();
     const resultBox = document.getElementById("result");
 
-    if(trackingDatabase[code]){
-      const data = trackingDatabase[code];
+    const docRef = doc(db, "tracking", code);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
 
       resultBox.innerHTML = `
         <h3 style="color:lime;">Tracking Found ✅</h3>
@@ -86,7 +104,8 @@
       `;
     }
   }
-   </script>
-    
+
+</script>
+
 </body>
 </html>
