@@ -32,20 +32,38 @@
 
   <input type="text" id="trackInput" placeholder="Enter Tracking Code">
   <br><br>
-  <button onclick="checkTracking()">Track</button>
+  <button onclick="checkTracking()">Track>
   
   <div id="result" style="margin-top:30px;"></div>
 
-<script>
+
+  <script>
+  const trackingDatabase = {
+    "FX-UK-2026-83921": {
+      status: "Processing",
+      location: "London, UK"
+    },
+    "FX-US-2026-44512": {
+      status: "In Transit",
+      location: "New York, USA"
+    },
+    "FX-DE-2026-99831": {
+      status: "Delivered",
+      location: "Berlin, Germany"
+    }
+  };
+
   function checkTracking(){
-    const code = document.getElementById("trackInput").value;
+    const code = document.getElementById("trackInput").value.trim();
     const resultBox = document.getElementById("result");
 
-    if(code === "FX-UK-2026-83921"){
+    if(trackingDatabase[code]){
+      const data = trackingDatabase[code];
+
       resultBox.innerHTML = `
         <h3 style="color:lime;">Tracking Found ✅</h3>
-        <p>Status: Processing</p>
-        <p>Location: London, UK</p>
+        <p>Status: ${data.status}</p>
+        <p>Location: ${data.location}</p>
       `;
     } else {
       resultBox.innerHTML = `
@@ -53,7 +71,7 @@
       `;
     }
   }
- </script>      
-  
+  </script>
+
 </body>
 </html>
