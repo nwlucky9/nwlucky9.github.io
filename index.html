@@ -29,7 +29,12 @@
 <body>
 
   <h1>FastX Tracking System</h1>
-
+  
+  <hr>
+  <h3>Admin: Create New Order</h3>
+  <button onclick="createOrder()">Generate Tracking Code</button>
+  <p id="newCode"></p>
+  <hr>
   <input type="text" id="trackInput" placeholder="Enter Tracking Code">
   <br><br>
   <button onclick="checkTracking()">Track>
@@ -37,21 +42,31 @@
   <div id="result" style="margin-top:30px;"></div>
 
 
-  <script>
-  const trackingDatabase = {
-    "FX-UK-2026-83921": {
+   <script>
+  const trackingDatabase = {};
+
+  function generateTrackingCode() {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const country = letters[Math.floor(Math.random() * letters.length)] +
+                    letters[Math.floor(Math.random() * letters.length)];
+
+    const year = new Date().getFullYear();
+    const randomNum = Math.floor(10000 + Math.random() * 90000);
+
+    return `FX-${country}-${year}-${randomNum}`;
+  }
+
+  function createOrder() {
+    const newCode = generateTrackingCode();
+
+    trackingDatabase[newCode] = {
       status: "Processing",
-      location: "London, UK"
-    },
-    "FX-US-2026-44512": {
-      status: "In Transit",
-      location: "New York, USA"
-    },
-    "FX-DE-2026-99831": {
-      status: "Delivered",
-      location: "Berlin, Germany"
-    }
-  };
+      location: "Warehouse"
+    };
+
+    document.getElementById("newCode").innerHTML =
+      "New Tracking Code: <b>" + newCode + "</b>";
+  }
 
   function checkTracking(){
     const code = document.getElementById("trackInput").value.trim();
@@ -71,7 +86,7 @@
       `;
     }
   }
-  </script>
-
+   </script>
+    
 </body>
 </html>
