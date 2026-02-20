@@ -1,10 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FastX Test</title>
+  <title>FastX Tracking</title>
+  <style>
+    body{
+      background:#0f172a;
+      color:white;
+      text-align:center;
+      padding-top:100px;
+      font-family:Arial;
+    }
+    input{
+      padding:10px;
+      width:250px;
+      border-radius:5px;
+      border:none;
+    }
+    button{
+      padding:10px 20px;
+      background:#3b82f6;
+      border:none;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+    }
+  </style>
 </head>
-<body style="background:#111;color:white;text-align:center;padding-top:100px;font-family:Arial;">
-  <h1>FastX is Live 🚀</h1>
-  <p>If you can see this, GitHub Pages is working.</p>
+<body>
+
+  <h1>FastX Tracking System</h1>
+
+  <input type="text" id="trackInput" placeholder="Enter Tracking Code">
+  <br><br>
+  <button onclick="checkTracking()">Track</button>
+
+  <script>
+    function checkTracking(){
+      const code = document.getElementById("trackInput").value;
+
+      if(code === "FX-UK-2026-83921"){
+        alert("Tracking Found ✅\nStatus: Processing\nLocation: London, UK");
+      }else{
+        alert("Tracking code not found ❌");
+      }
+    }
+  </script>
+
 </body>
 </html>
