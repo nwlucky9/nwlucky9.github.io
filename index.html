@@ -2,12 +2,13 @@
 <html>
 <head>
   <title>FastX Tracking</title>
+
   <style>
     body{
       background:#0f172a;
       color:white;
       text-align:center;
-      padding-top:100px;
+      padding-top:60px;
       font-family:Arial;
     }
     input{
@@ -23,92 +24,82 @@
       color:white;
       border-radius:5px;
       cursor:pointer;
+      margin-top:10px;
+    }
+    #result{
+      margin-top:30px;
     }
   </style>
 </head>
+
 <body>
 
-  <h1>FastX Tracking System</h1>
-  
-  <hr>
-  <h3>Admin: Create New Order</h3>
-  <button onclick="createOrder()">Generate Tracking Code</button>
-  <p id="newCode"></p>
-  <hr>
-  <input type="text" id="trackInput" placeholder="Enter Tracking Code">
-  <br><br>
-  <button onclick="checkTracking()">Track>
-  
-  <div id="result" style="margin-top:30px;"></div>
+<h1>FastX Tracking System</h1>
 
-   <!-- Firebase SDK -->
-<script type="module">
+<h3>Admin: Create Order</h3>
+<button onclick="createOrder()">Generate Tracking Code</button>
+<p id="newCode"></p>
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<hr>
 
-  const firebaseConfig = {
-    apiKey: "PASTE_YOUR_API_KEY",
-    authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-    projectId: "PASTE_YOUR_PROJECT_ID",
-    storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
-    messagingSenderId: "PASTE_YOUR_SENDER_ID",
-    appId: "PASTE_YOUR_APP_ID"
+<input type="text" id="trackInput" placeholder="Enter Tracking Code">
+<br>
+<button onclick="checkTracking()">Track</button>
+
+<div id="result"></div>
+
+<!-- Firebase CDN (NON-MODULE SAFE VERSION) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+
+  // 🔥 Your Firebase Config
+  var firebaseConfig = {
+    apiKey: "AIzaSyCQLIQhOsPZqT3FjHMZ1M76faPA4pbVYS4",
+    authDomain: "fastx-courier.firebaseapp.com",
+    projectId: "fastx-courier",
+    storageBucket: "fastx-courier.firebasestorage.app",
+    messagingSenderId: "520523714412",
+    appId: "1:520523714412:web:87f2e0593433476b8ced49",
+    measurementId: "G-G4QSN3MN7Y"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
 
-  // Generate tracking code
+  // Generate Tracking Code
   function generateTrackingCode() {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const country = letters[Math.floor(Math.random() * letters.length)] +
-                    letters[Math.floor(Math.random() * letters.length)];
-    const year = new Date().getFullYear();
-    const randomNum = Math.floor(10000 + Math.random() * 90000);
-    return `FX-${country}-${year}-${randomNum}`;
+    return "FX-" + Math.floor(100000 + Math.random() * 900000);
   }
 
-  // Create order in Firebase
-  window.createOrder = async function() {
-    const newCode = generateTrackingCode();
+  // Create Order (Save to Firebase)
+  function createOrder() {
+    var newCode = generateTrackingCode();
 
-    await setDoc(doc(db, "tracking", newCode), {
+    db.collection("tracking").doc(newCode).set({
       status: "Processing",
       location: "Warehouse"
+    })
+    .then(function() {
+      document.getElementById("newCode").innerHTML =
+        "New Tracking Code: <b>" + newCode + "</b>";
+    })
+    .catch(function(error) {
+      alert("Error saving order");
+      console.error(error);
     });
-
-    document.getElementById("newCode").innerHTML =
-      "New Tracking Code: <b>" + newCode + "</b>";
   }
 
-  <button onclick="testFirebase()">Test Firebase</button>
-  
-  // Check tracking from Firebase
-  window.checkTracking = async function() {
-    const code = document.getElementById("trackInput").value.trim();
-    const resultBox = document.getElementById("result");
+  // Check Tracking (Read from Firebase)
+  function checkTracking() {
+    var code = document.getElementById("trackInput").value.trim();
+    var resultBox = document.getElementById("result");
 
-    const docRef = doc(db, "tracking", code);
-    const docSnap = await getDoc(docRef);
+    db.collection("tracking").doc(code).get()
+      .then(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-
-      resultBox.innerHTML = `
-        <h3 style="color:lime;">Tracking Found ✅</h3>
-        <p>Status: ${data.status}</p>
-        <p>Location: ${data.location}</p>
-      `;
-    } else {
-      resultBox.innerHTML = `
-        <h3 style="color:red;">Tracking code not found ❌</h3>
-      `;
-    }
-  }
-
-</script>
-
-</body>
-<script> type="module" src="script.js"></script>
-</html>
+          resultBox.innerHTML =
